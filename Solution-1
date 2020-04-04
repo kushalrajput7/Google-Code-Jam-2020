@@ -1,0 +1,41 @@
+Solution-1
+
+import numpy as np
+t =int(input())
+for x in range(t):
+    m=[]
+    t=[]
+    r=0
+    c=0
+    sum_d=0
+    size=int(input())
+    for s in range(size):
+        l=list(map(int,input().split()))
+        m.append(l)
+    matrix=np.array(m)
+   # print(matrix)
+    #row=np.split(matrix,1)
+    for i in range(len(matrix)):
+        #print(matrix[i])
+        set_r=set(matrix[i])
+        if(len(set_r)!=len(matrix[i])):
+            r=r+1
+        else:
+            continue
+    #print(r)
+    for i in range(len(matrix)):
+        for j in range(len(matrix)):
+            if(i==j):
+                sum_d+=matrix[i][j]
+            else:
+                continue
+    matrix2=matrix.transpose()
+    for i in range(len(matrix2)):
+        set_c=set(matrix2[i])
+        if(len(set_c)!=len(matrix2[i])):
+            c=c+1
+        else:
+            continue
+    print("case #{}: {} {} {}".format(x+1,sum_d,r,c))
+    #print(c)
+    #print(sum_d)
