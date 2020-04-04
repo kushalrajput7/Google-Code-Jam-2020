@@ -1,3 +1,47 @@
 Solution-3
 
-//this is code
+t=int(input())
+listl=[]
+ans=""
+for i in range(0,t):
+    flag=0
+    temp=int(input())
+    listl.append(temp)
+    tempmc=0
+    tempnc=0
+    tempmj=0
+    tempnj=0
+    templist=[]
+    index=[]
+    for j in range(0,temp):
+        m,n=map(int,input().split())
+        templist.append([m,n])
+        index.append([m,n,j,"0"])
+    templist.sort(key = lambda templist: templist[0])
+    for j in range(0,temp):
+        if(templist[j][0]>=tempnc):
+            
+            for k in range(0,len(index)):
+                if(templist[j][0]==index[k][0] and templist[j][1]==index[k][1]):
+                    index[k][3]="C"
+                ans=ans+"C"
+                tempmc=templist[j][0]
+                tempnc=templist[j][1]
+        elif(templist[j][0]<tempnc):
+            if(templist[j][0]>=tempnj):
+                for k in range(0,len(index)):
+                    if(templist[j][0]==index[k][0] and templist[j][1]==index[k][1]):
+                        index[k][3]="J"
+                ans=ans+"J"
+                tempmj=templist[j][0]
+                tempnj=templist[j][1]
+            else:
+                ans="IMPOSSIBLE"
+                flag=1
+    tempfinal=""
+    if(flag==0):
+        for k in range(0,len(index)):
+            tempfinal=tempfinal+index[k][3]
+        print("Case #{}: {}".format(i+1,tempfinal))
+    else:
+        print("Case #{}: IMPOSSIBLE".format(i+1))
