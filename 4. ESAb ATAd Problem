@@ -7,72 +7,97 @@ Unfortunately, this ultra-modern machine is subject to random quantum fluctuatio
 after every 1st, 11th, 21st, 31st... etc. query is sent, but before the response is given,
 quantum fluctuation causes exactly one of the following four effects, with equal probability
 
-from itertools import combinations
-import numpy as np
 import sys
 
-def complement(bits): return [
-    '_' if b is '_' else 
-    '1' if b=='0' else '0' 
-    for b in bits
-]
 
-class QuantumArray():
-    def __init__(self, B):
-        self.bits = ['_'] * B
-        self.unkowns = list(range(B))
-        self.read(10)
-        self.run()
-
-    def read(self, n):
-        for _ in range(n):
-            i = self.unkowns.pop()
-            self.bits[i] = self.read_bit(i+1)
-            self.unkowns = self.unkowns[::-1]
-        self.update_states()
-
-    def read_bit(self, i):
-        print(i, flush=True)
-        return input()
-
-    def update_states(self):
-        self.bits_c  = complement(self.bits)
-        self.bits_cr = self.bits_c[::-1]
-        self.bits_r  = complement(self.bits_cr)
-        self.states = [self.bits, self.bits_c, self.bits_cr, self.bits_r]
-
-    def get_test_idx(self):
-        candidates = list(set(range(B)) - set(self.unkowns))
-        max_states = len(set(map(tuple, self.states)))
-        for idx in combinations(candidates, 2):
-            num_states = len(set(
-                tuple(np.take(state, idx))
-                for state in self.states
-            ))
-            if num_states == max_states: return idx
-
-    def collapse(self):        
-        test_idx = self.get_test_idx()
-        test = [self.read_bit(i+1) for i in test_idx]
-                
-        self.bits = next(state
-            for state in self.states
-            if test == list(np.take(state, test_idx))
-        )
-
-    def run(self):
-        while True:
-            self.collapse()
-            try: self.read(8)
-            except IndexError: break
-    
-
-T, B = map(int, input().split())
-print('B:', B, file=sys.stderr)
-for _ in range(T): 
-    array = QuantumArray(B)
-    print('guess:', ''.join(array.bits), file=sys.stderr)
-    print(''.join(array.bits), flush=True)
-    if input() == 'N': sys.exit()
+def transform_reverse(arr):
+    return arr[::-1]
 
 
+def transform_complement(arr):
+    return [1 - x for x in arr]
+
+
+def main():
+    cases, B = list(map(int, input().split()))
+
+    for case in range(cases):
+        starts = [None] * (B // 2)
+        ends = [None] * (B // 2)
+        current_position = 0
+        query_count = 0
+
+        done = False
+        while not done:
+            # We ask for 0, B-1, 1, B-2, etc. until B/2, B/2 + 1
+            while query_count == 0 or query_count % 10 != 0:
+                if current_position == B // 2:
+                    done = True
+                    break
+
+                # Ask for 2 more positions
+                print(current_position + 1)
+                sys.stdout.flush()
+                starts[current_position] = int(input())
+                print((B - 1 - current_position) + 1)
+                sys.stdout.flush()
+                ends[- 1 - current_position] = int(input())
+                query_count += 2
+                current_position += 1
+
+                if query_count % 10 == 0:
+                    # quantum fluctuations may have happened. We can adjust the array with up to two queries
+                    arr = starts[:current_position] + ends[(B // 2) - current_position:]
+                    arr_c = transform_complement(arr)
+                    arr_r = transform_reverse(arr)
+
+                    # - If reverse(arr) == arr or reverse(arr) == complement(arr), then we only need to check one byte.
+                    #   It can actually be the first one
+                    # - Otherwise, we need to check two bytes
+                    if arr_r == arr or arr_r == arr_c:
+                        # We only have two outcomes: the original array or the complemented one
+                        print(1)
+                        sys.stdout.flush()
+                        bit = int(input())
+                        if arr[0] != bit:
+                            arr = arr_c
+
+                        # Dummy query, to keep the query count a multiple of 2
+                        print(1)
+                        sys.stdout.flush()
+                        input()
+                    else:
+                        # Query a bit that changes only when complemented, then a bit that changes on any of the two
+                        for pos in range(current_position):
+                            if arr[pos] == arr_r[pos]:
+                                print(pos + 1)
+                                sys.stdout.flush()
+                                bit = int(input())
+                                if bit != arr[pos]:
+                                    arr = transform_complement(arr)
+                                    arr_r = transform_reverse(arr)
+                                break
+
+                        for pos in range(current_position):
+                            if arr[pos] != arr_r[pos]:
+                                print(pos + 1)
+                                sys.stdout.flush()
+                                bit = int(input())
+                                if bit != arr[pos]:
+                                    arr = transform_reverse(arr)
+                                break
+
+                    for pos in range(current_position):
+                        starts[pos] = arr[pos]
+                        ends[- 1 - pos] = arr[-1 - pos]
+
+                    query_count += 2
+
+            # Print the solution
+            print(''.join(map(str, starts + ends)))
+            sys.stdout.flush()
+            input()
+
+
+if __name__ == '__main__':
+    main()
