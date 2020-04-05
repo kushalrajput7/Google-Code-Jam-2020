@@ -1,4 +1,11 @@
 Solution-3
+Cameron and Jamie's kid is almost 3 years old! However, even though the child is more independent now, 
+scheduling kid activities and domestic necessities is still a challenge for the couple.
+
+Cameron and Jamie have a list of N activities to take care of during the day. 
+Each activity happens during a specified interval during the day. They need to assign each activity to one of them, 
+so that neither of them is responsible for two activities that overlap. 
+An activity that ends at time t is not considered to overlap with another activity that starts at time t.
 
 #include <bits/stdc++.h>
 
