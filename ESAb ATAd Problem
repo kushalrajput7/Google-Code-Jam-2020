@@ -1,0 +1,11 @@
+Solution-4
+The consortium has decided that distributed systems are too complicated, so they are storing B bits of important information 
+in a single array on one awesome machine. 
+As an additional layer of security, they have made it difficult to obtain the information quickly; 
+the user must query for a bit position between 1 and B, and then they receive that bit of the stored array as a response.
+Unfortunately, this ultra-modern machine is subject to random quantum fluctuations! Specifically, 
+after every 1st, 11th, 21st, 31st... etc. query is sent, but before the response is given,
+quantum fluctuation causes exactly one of the following four effects, with equal probability
+
+
+
